@@ -13,13 +13,4 @@ public class Order {
         this.amount = amount;
         this.email = email;
     }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "orderId='" + orderId + '\'' +
-                ", amount=" + amount +
-                ", email=" + email +
-                '}';
-    }
 }

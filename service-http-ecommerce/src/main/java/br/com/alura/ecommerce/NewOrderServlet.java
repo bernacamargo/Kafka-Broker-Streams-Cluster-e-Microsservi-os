@@ -1,5 +1,8 @@
 package br.com.alura.ecommerce;
 
+import org.eclipse.jetty.servlet.Source;
+
+import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,31 +26,32 @@ public class NewOrderServlet extends HttpServlet {
     }
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+
+            // we are not caring about any security issues, we are only
+            // showing how to use http as a starting point
             var email = req.getParameter("email");
             var amount = new BigDecimal(req.getParameter("amount"));
 
             var orderId = UUID.randomUUID().toString();
+
             var order = new Order(orderId, amount, email);
             orderDispatcher.send("ECOMMERCE_NEW_ORDER", email, order);
 
             var emailCode = "Thank you for your order! We are processing your order!";
             emailDispatcher.send("ECOMMERCE_SEND_EMAIL", email, emailCode);
-            var successMsg = "New order sent successfully.";
-            System.out.println(successMsg);
+
+            System.out.println("New order sent successfully.");
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().println(successMsg);
-        } catch (ExecutionException | InterruptedException e) {
+            resp.getWriter().println("New order sent");
+
+        } catch (ExecutionException e) {
             throw new ServletException(e);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new ServletException(e);
         }
+
 
     }
 }
